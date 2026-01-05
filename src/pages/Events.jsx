@@ -3,6 +3,7 @@ import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 import { db } from '../services/firebase';
 import Calendar from 'react-calendar';
 import { format, isSameDay, parseISO } from 'date-fns';
+import { Printer, X } from 'lucide-react';
 import 'react-calendar/dist/Calendar.css';
 import './Events.css';
 
@@ -10,6 +11,7 @@ const Events = () => {
     const [events, setEvents] = useState([]);
     const [loading, setLoading] = useState(true);
     const [selectedDate, setSelectedDate] = useState(new Date());
+    const [showModal, setShowModal] = useState(false);
 
     useEffect(() => {
         const fetchEvents = async () => {
@@ -40,7 +42,27 @@ const Events = () => {
 
     const onDateChange = (date) => {
         setSelectedDate(date);
+        // Check if the selected date has events
+        const hasEvents = events.some(event => isSameDay(event.jsDate, date));
+        if (hasEvents) {
+            setShowModal(true);
+        }
     };
+
+    const closeModal = () => {
+        setShowModal(false);
+    };
+
+    // Handle Escape key to close modal
+    useEffect(() => {
+        const handleEscape = (e) => {
+            if (e.key === 'Escape' && showModal) {
+                closeModal();
+            }
+        };
+        window.addEventListener('keydown', handleEscape);
+        return () => window.removeEventListener('keydown', handleEscape);
+    }, [showModal]);
 
     // Filter events for the selected date
     const selectedEvents = events.filter(event =>
@@ -101,14 +123,22 @@ const Events = () => {
         );
     };
 
+    const handlePrint = () => {
+        window.print();
+    };
+
     return (
         <div className="events-page container">
             <header className="events-header">
                 <h1>Events Calendar</h1>
                 <p>Join us for upcoming activities at the Branch.</p>
+                <button onClick={handlePrint} className="print-button" aria-label="Print Calendar">
+                    <Printer size={20} />
+                    <span>Print Calendar</span>
+                </button>
             </header>
 
-            <div className="calendar-grid">
+            <div className="calendar-container">
                 <div className="calendar-wrapper">
                     <Calendar
                         onChange={onDateChange}
@@ -119,34 +149,46 @@ const Events = () => {
                         tileContent={getTileContent}
                     />
                 </div>
+            </div>
 
-                <div className="events-detail-list">
-                    <h2>Events for {format(selectedDate, 'MMMM do, yyyy')}</h2>
-
-                    {selectedEvents.length === 0 ? (
-                        <div className="no-events-selected">
-                            <p>No events scheduled for this day.</p>
-                            {events.length > 0 && (
-                                <p className="hint">Look for dates with red dots on the calendar.</p>
+            {/* Modal for event details */}
+            {showModal && (
+                <div className="modal-backdrop" onClick={closeModal}>
+                    <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                        <div className="modal-header">
+                            <h2>Events for {format(selectedDate, 'MMMM do, yyyy')}</h2>
+                            <button
+                                className="modal-close-btn"
+                                onClick={closeModal}
+                                aria-label="Close modal"
+                            >
+                                <X size={24} />
+                            </button>
+                        </div>
+                        <div className="modal-body">
+                            {selectedEvents.length === 0 ? (
+                                <div className="no-events-selected">
+                                    <p>No events scheduled for this day.</p>
+                                </div>
+                            ) : (
+                                <div className="events-list">
+                                    {selectedEvents.map(event => (
+                                        <div key={event.id} className="event-card">
+                                            <div className="event-time-badge">
+                                                {formatTimeRange(event)}
+                                            </div>
+                                            <div className="event-info">
+                                                <h3>{event.title}</h3>
+                                                <p>{event.description}</p>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
                             )}
                         </div>
-                    ) : (
-                        <div className="events-list">
-                            {selectedEvents.map(event => (
-                                <div key={event.id} className="event-card">
-                                    <div className="event-time-badge">
-                                        {formatTimeRange(event)}
-                                    </div>
-                                    <div className="event-info">
-                                        <h3>{event.title}</h3>
-                                        <p>{event.description}</p>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    )}
+                    </div>
                 </div>
-            </div>
+            )}
         </div>
     );
 };

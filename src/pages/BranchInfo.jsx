@@ -1,13 +1,26 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { NavLink, Outlet, Navigate, useLocation } from 'react-router-dom';
+import { ChevronDown } from 'lucide-react';
 import './BranchInfo.css';
 
 const BranchInfoLayout = () => {
-    // Redirect to first tab if exact match on /branch-info
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
     const location = useLocation();
+
+    // Redirect to first tab if exact match on /branch-info
     if (location.pathname === '/branch-info') {
         return <Navigate to="/branch-info/executive" replace />;
     }
+
+    const navItems = [
+        { path: '/branch-info/executive', label: 'Executive Members' },
+        { path: '/branch-info/membership', label: 'Membership' },
+        { path: '/branch-info/resources', label: 'Member Resources' },
+        { path: '/branch-info/sports', label: 'Sports' },
+        { path: '/branch-info/rentals', label: 'Room Rentals' },
+    ];
+
+    const activeItem = navItems.find(item => location.pathname === item.path) || navItems[0];
 
     return (
         <div className="container branch-container">
@@ -15,12 +28,25 @@ const BranchInfoLayout = () => {
 
             <div className="branch-layout">
                 <aside className="branch-sidebar">
-                    <nav>
-                        <NavLink to="/branch-info/executive" className={({ isActive }) => isActive ? "active" : ""}>Executive Members</NavLink>
-                        <NavLink to="/branch-info/membership" className={({ isActive }) => isActive ? "active" : ""}>Membership</NavLink>
-                        <NavLink to="/branch-info/resources" className={({ isActive }) => isActive ? "active" : ""}>Member Resources</NavLink>
-                        <NavLink to="/branch-info/sports" className={({ isActive }) => isActive ? "active" : ""}>Sports</NavLink>
-                        <NavLink to="/branch-info/rentals" className={({ isActive }) => isActive ? "active" : ""}>Room Rentals</NavLink>
+                    <div
+                        className="mobile-nav-header"
+                        onClick={() => setIsMenuOpen(!isMenuOpen)}
+                    >
+                        <span>{activeItem.label}</span>
+                        <ChevronDown className={`chevron ${isMenuOpen ? 'open' : ''}`} size={20} />
+                    </div>
+
+                    <nav className={isMenuOpen ? 'show' : ''}>
+                        {navItems.map(item => (
+                            <NavLink
+                                key={item.path}
+                                to={item.path}
+                                onClick={() => setIsMenuOpen(false)}
+                                className={({ isActive }) => isActive ? "active" : ""}
+                            >
+                                {item.label}
+                            </NavLink>
+                        ))}
                     </nav>
                 </aside>
 

@@ -30,7 +30,7 @@ const Home = () => {
                             <Link to="/contact">Contact for Rentals</Link>
                         </div>
                         <div className="info-card">
-                            <h3>Capers Catering</h3>
+                            <h3>Cove Catering</h3>
                             <p>Delicious food available. Check out our menu and specials.</p>
                             <Link to="/food-service">View Menu</Link>
                         </div>

@@ -1,12 +1,55 @@
 import React, { useState, useEffect } from 'react';
-import { collection, addDoc, deleteDoc, doc, getDocs, query, orderBy, writeBatch } from 'firebase/firestore';
-import { db } from '../services/firebase';
+import { collection, addDoc, deleteDoc, updateDoc, doc, getDocs, query, orderBy, writeBatch } from 'firebase/firestore';
+import { ref, deleteObject } from 'firebase/storage';
+import { db, storage } from '../services/firebase';
 import { Link } from 'react-router-dom';
 import './ManagePages.css';
+
+const compressAndConvertToBase64 = (file, maxWidth = 400, maxHeight = 400, quality = 0.7) => {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = (event) => {
+            const img = new Image();
+            img.src = event.target.result;
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                let width = img.width;
+                let height = img.height;
+
+                if (width > height) {
+                    if (width > maxWidth) {
+                        height *= maxWidth / width;
+                        width = maxWidth;
+                    }
+                } else {
+                    if (height > maxHeight) {
+                        width *= maxHeight / height;
+                        height = maxHeight;
+                    }
+                }
+
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+
+                const dataUrl = canvas.toDataURL('image/jpeg', quality);
+                resolve(dataUrl);
+            };
+            img.onerror = (error) => reject(error);
+        };
+        reader.onerror = (error) => reject(error);
+    });
+};
 
 const ManageExecutive = () => {
     const [executives, setExecutives] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [imageFile, setImageFile] = useState(null);
+    const [imagePreview, setImagePreview] = useState(null);
+    const [editingId, setEditingId] = useState(null);
+    const [currentImageUrl, setCurrentImageUrl] = useState(null);
     const [formData, setFormData] = useState({
         name: '',
         role: '',
@@ -55,27 +98,121 @@ const ManageExecutive = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await addDoc(collection(db, 'executives'), {
-                ...formData,
-                order: Number(formData.order)
-            });
+            let imageUrl = currentImageUrl;
+
+            // If new image selected, compress and convert to Base64
+            if (imageFile) {
+                try {
+                    imageUrl = await compressAndConvertToBase64(imageFile);
+                } catch (convError) {
+                    console.error("Image conversion error:", convError);
+                    alert("Failed to process image. Please try another one.");
+                    return;
+                }
+            }
+
+            if (editingId) {
+                // UPDATE existing executive
+                await updateDoc(doc(db, 'executives', editingId), {
+                    ...formData,
+                    order: Number(formData.order),
+                    imageUrl
+                });
+
+                // Reset edit mode
+                setEditingId(null);
+                setCurrentImageUrl(null);
+                alert("Executive updated successfully!");
+            } else {
+                // ADD new executive
+                await addDoc(collection(db, 'executives'), {
+                    ...formData,
+                    order: Number(formData.order),
+                    imageUrl
+                });
+                alert("Executive added successfully!");
+            }
+
             setFormData({ name: '', role: 'Executive', responsibility: '', order: executives.length + 1 });
+            setImageFile(null);
+            setImagePreview(null);
             fetchExecutives();
         } catch (error) {
-            console.error("Error adding executive:", error);
-            alert("Failed to add executive");
+            console.error("Error saving executive:", error);
+            alert("Failed to save executive: " + error.message);
         }
     };
 
     const handleDelete = async (id) => {
-        if (window.confirm("Delete this executive member?")) {
-            try {
-                await deleteDoc(doc(db, 'executives', id));
-                fetchExecutives();
-            } catch (error) {
-                console.error("Error deleting executive:", error);
+        if (!window.confirm("Delete this executive member? This action cannot be undone.")) return;
+
+        try {
+            // Get the executive data to check for legacy images
+            const executive = executives.find(e => e.id === id);
+
+            // Delete legacy image from storage if it exists (starts with https)
+            if (executive?.imageUrl && executive.imageUrl.startsWith('https://')) {
+                try {
+                    const imageRef = ref(storage, executive.imageUrl);
+                    await deleteObject(imageRef).catch(err => {
+                        console.warn("Storage deletion failed (likely already deleted or CORS):", err);
+                    });
+                } catch (error) {
+                    console.warn("Could not create storage ref for deletion:", error);
+                }
             }
+
+            // Always delete the Firestore document
+            await deleteDoc(doc(db, 'executives', id));
+
+            // Refresh list and notify user
+            await fetchExecutives();
+            alert("Executive member deleted successfully.");
+        } catch (error) {
+            console.error("Error deleting executive:", error);
+            alert("Failed to delete executive: " + error.message);
         }
+    };
+
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            // Validate file type
+            if (!file.type.startsWith('image/')) {
+                alert('Please select an image file');
+                return;
+            }
+            // Validate file size (2MB max)
+            if (file.size > 2 * 1024 * 1024) {
+                alert('Image must be less than 2MB');
+                return;
+            }
+            setImageFile(file);
+            setImagePreview(URL.createObjectURL(file));
+        }
+    };
+
+    const handleEdit = (exec) => {
+        setEditingId(exec.id);
+        setFormData({
+            name: exec.name,
+            role: exec.role,
+            responsibility: exec.responsibility || '',
+            order: exec.order
+        });
+        setCurrentImageUrl(exec.imageUrl || null);
+        setImagePreview(exec.imageUrl || null);
+        setImageFile(null);
+        // Scroll to form
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    const handleCancelEdit = () => {
+        setEditingId(null);
+        setCurrentImageUrl(null);
+        setFormData({ name: '', role: 'Executive', responsibility: '', order: executives.length + 1 });
+        setImageFile(null);
+        setImagePreview(null);
     };
 
     const handleMigrate = async () => {
@@ -108,7 +245,7 @@ const ManageExecutive = () => {
 
             <div className="manage-grid">
                 <div className="form-section">
-                    <h2>Add Executive</h2>
+                    <h2>{editingId ? 'Edit Executive' : 'Add Executive'}</h2>
                     <form onSubmit={handleSubmit}>
                         <div className="form-group">
                             <label>Name</label>
@@ -150,7 +287,43 @@ const ManageExecutive = () => {
                                 placeholder="e.g. Sports, Housing"
                             />
                         </div>
-                        <button type="submit" className="btn btn-primary">Add Member</button>
+                        <div className="form-group">
+                            <label>Profile Picture (Optional)</label>
+                            <input
+                                type="file"
+                                accept="image/*"
+                                onChange={handleImageChange}
+                            />
+                            {imagePreview && (
+                                <div style={{ marginTop: '1rem' }}>
+                                    <img
+                                        src={imagePreview}
+                                        alt="Preview"
+                                        style={{
+                                            width: '150px',
+                                            height: '150px',
+                                            objectFit: 'cover',
+                                            borderRadius: '8px',
+                                            border: '2px solid var(--color-gray-200)'
+                                        }}
+                                    />
+                                </div>
+                            )}
+                        </div>
+                        <div style={{ display: 'flex', gap: '1rem' }}>
+                            <button type="submit" className="btn btn-primary">
+                                {editingId ? 'Update Member' : 'Add Member'}
+                            </button>
+                            {editingId && (
+                                <button
+                                    type="button"
+                                    onClick={handleCancelEdit}
+                                    className="btn btn-outline-dark"
+                                >
+                                    Cancel
+                                </button>
+                            )}
+                        </div>
                     </form>
 
                     {executives.length === 0 && (
@@ -168,12 +341,40 @@ const ManageExecutive = () => {
                         <ul className="manage-list">
                             {executives.map(exec => (
                                 <li key={exec.id} className="manage-item">
+                                    {exec.imageUrl && (
+                                        <img
+                                            src={exec.imageUrl}
+                                            alt={exec.name}
+                                            style={{
+                                                width: '60px',
+                                                height: '60px',
+                                                objectFit: 'cover',
+                                                borderRadius: '50%',
+                                                marginRight: '1rem'
+                                            }}
+                                        />
+                                    )}
                                     <div className="item-info">
                                         <h3>{exec.name}</h3>
                                         <p style={{ fontWeight: 'bold', color: 'var(--color-poppy-red)' }}>{exec.role}</p>
                                         {exec.responsibility && <p className="item-meta">Focus: {exec.responsibility}</p>}
                                     </div>
-                                    <button onClick={() => handleDelete(exec.id)} className="btn-delete">Delete</button>
+                                    <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                        <button
+                                            onClick={() => handleEdit(exec)}
+                                            className="btn btn-outline-dark"
+                                            disabled={editingId && editingId !== exec.id}
+                                            style={{ fontSize: '0.9rem', padding: '0.5rem 1rem' }}
+                                        >
+                                            Edit
+                                        </button>
+                                        <button
+                                            onClick={() => handleDelete(exec.id)}
+                                            className="btn-delete"
+                                        >
+                                            Delete
+                                        </button>
+                                    </div>
                                 </li>
                             ))}
                         </ul>

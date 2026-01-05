@@ -39,8 +39,8 @@ const FoodService = () => {
     return (
         <div className="food-page container">
             <header className="food-header">
-                <h1>Capers Catering</h1>
-                <p>Delicious homemade meals served at the Branch</p>
+                <h1>Cove Catering</h1>
+                <p>Welcome Mel and Cove Catering to the Limestone City Branch 560! Enjoy our favorites: fish and chips, wings, burgers, poutine, salads and more.</p>
             </header>
 
             {menuItems.length === 0 ? (
