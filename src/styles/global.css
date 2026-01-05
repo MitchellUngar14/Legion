@@ -25,6 +25,7 @@ ul {
 
 img {
     max-width: 100%;
+    height: auto;
     display: block;
 }
 
@@ -39,6 +40,12 @@ button {
     max-width: var(--container-width);
     margin: 0 auto;
     padding: 0 var(--spacing-md);
+}
+
+@media screen and (max-width: 768px) {
+    .container {
+        padding: 0 var(--spacing-sm);
+    }
 }
 
 h1,

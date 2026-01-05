@@ -11,6 +11,25 @@
     padding-bottom: 1rem;
 }
 
+@media screen and (max-width: 768px) {
+    .dashboard-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .user-info {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .btn-outline-dark {
+        margin-left: 0;
+    }
+}
+
 .btn-outline-dark {
     border: 1px solid #333;
     padding: 8px 16px;

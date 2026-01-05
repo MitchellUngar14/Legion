@@ -25,6 +25,24 @@
     color: #666;
 }
 
+@media screen and (max-width: 768px) {
+    .food-page {
+        padding: 2rem 1rem;
+    }
+
+    .food-header {
+        margin-bottom: 2rem;
+    }
+
+    .food-header h1 {
+        font-size: 2.2rem;
+    }
+
+    .food-header p {
+        font-size: 1rem;
+    }
+}
+
 .menu-category {
     margin-bottom: 4rem;
 }
@@ -41,6 +59,16 @@
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+@media screen and (max-width: 768px) {
+    .menu-category h2 {
+        font-size: 1.5rem;
+    }
+
+    .menu-category {
+        margin-bottom: 2.5rem;
+    }
 }
 
 .menu-category h2::before,
