@@ -1,0 +1,104 @@
+.manage-container {
+    padding: 4rem 0;
+}
+
+.manage-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.manage-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+}
+
+@media (max-width: 768px) {
+    .manage-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.form-section,
+.list-section {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    align-self: start;
+}
+
+.form-section h2,
+.list-section h2 {
+    margin-bottom: 1.5rem;
+    color: var(--color-poppy-red);
+    border-bottom: 1px solid #eee;
+    padding-bottom: 0.5rem;
+}
+
+.form-row {
+    display: flex;
+    gap: 1rem;
+}
+
+.form-row .form-group {
+    flex: 1;
+}
+
+textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-family: inherit;
+    resize: vertical;
+}
+
+select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: white;
+}
+
+.manage-list {
+    list-style: none;
+}
+
+.manage-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    border-bottom: 1px solid #eee;
+}
+
+.manage-item:last-child {
+    border-bottom: none;
+}
+
+.item-info h3 {
+    font-size: 1rem;
+    margin-bottom: 0.2rem;
+}
+
+.item-meta {
+    font-size: 0.8rem;
+    color: #666;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+.btn-delete {
+    color: #ef4444;
+    font-weight: bold;
+    padding: 0.5rem;
+    border-radius: 4px;
+}
+
+.btn-delete:hover {
+    background-color: #fee2e2;
+}

@@ -1,0 +1,24 @@
+:root {
+  /* Colors */
+  --color-poppy-red: #E31837;
+  --color-black: #111111;
+  --color-white: #FFFFFF;
+  --color-gold: #D4AF37;
+  --color-gray-100: #f3f4f6;
+  --color-gray-200: #e5e7eb;
+  --color-gray-800: #1f2937;
+
+  /* Typography */
+  --font-family-sans: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
+  --font-family-serif: 'Merriweather', serif; /* For formal feel */
+
+  /* Spacing */
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 2rem;
+  --spacing-xl: 4rem;
+
+  /* Layout */
+  --container-width: 1200px;
+  --header-height: 80px;
+}

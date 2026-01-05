@@ -1,0 +1,109 @@
+.branch-container {
+    padding: 4rem 1rem;
+}
+
+.page-title {
+    margin-bottom: 2rem;
+    border-bottom: 2px solid var(--color-poppy-red);
+    padding-bottom: 1rem;
+    display: inline-block;
+}
+
+.branch-layout {
+    display: flex;
+    gap: 3rem;
+}
+
+@media (max-width: 768px) {
+    .branch-layout {
+        flex-direction: column;
+    }
+}
+
+.branch-sidebar {
+    flex: 0 0 250px;
+}
+
+.branch-sidebar nav {
+    display: flex;
+    flex-direction: column;
+    background: var(--color-gray-100);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.branch-sidebar a {
+    padding: 1rem;
+    border-bottom: 1px solid #e5e7eb;
+    transition: all 0.2s;
+    font-weight: 500;
+}
+
+.branch-sidebar a:hover {
+    background-color: #e5e7eb;
+    padding-left: 1.25rem;
+}
+
+.branch-sidebar a.active {
+    background-color: var(--color-poppy-red);
+    color: white;
+}
+
+.branch-main {
+    flex: 1;
+    background: white;
+    min-height: 400px;
+}
+
+.branch-content h2 {
+    margin-bottom: 1.5rem;
+    color: var(--color-red);
+}
+
+.branch-content h3 {
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+}
+
+.branch-content ul {
+    list-style: disc;
+    margin-left: 1.5rem;
+}
+
+.branch-content li {
+    margin-bottom: 0.5rem;
+}
+
+/* Sports Grid */
+.sports-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.sport-card {
+    background: var(--color-gray-100);
+    padding: 1.5rem;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.sport-card h3 {
+    margin-top: 0;
+    color: var(--color-poppy-red);
+}
+
+/* Exec List */
+.exec-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.exec-role {
+    border: 1px solid #eee;
+    padding: 1rem;
+    border-radius: 4px;
+}
