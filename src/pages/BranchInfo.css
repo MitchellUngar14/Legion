@@ -46,16 +46,26 @@
 
 @media (max-width: 768px) {
     .branch-sidebar nav {
-        flex-direction: row;
-        overflow-x: auto;
-        white-space: nowrap;
-        -webkit-overflow-scrolling: touch;
-        margin-bottom: 1rem;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.5rem;
+        background: transparent;
+        margin-bottom: 2rem;
     }
 
     .branch-sidebar a {
-        border-bottom: none;
-        border-right: 1px solid #e5e7eb;
+        border: 1px solid #e5e7eb;
+        border-radius: 4px;
+        text-align: center;
+        padding: 0.8rem 0.5rem;
+        font-size: 0.9rem;
+        background: var(--color-gray-100);
+    }
+
+    .branch-sidebar a.active {
+        background-color: var(--color-poppy-red);
+        color: white;
+        border-color: var(--color-poppy-red);
     }
 }
 
