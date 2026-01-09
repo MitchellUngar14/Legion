@@ -48,6 +48,18 @@ const Dashboard = () => {
                     <h2>Announcements</h2>
                     <p>Create and manage homepage announcements.</p>
                 </Link>
+
+                <Link to="/admin/rooms" className="dashboard-card">
+                    <div className="card-icon">🏛️</div>
+                    <h2>Room Rentals</h2>
+                    <p>Manage rentable rooms and pricing.</p>
+                </Link>
+
+                <Link to="/admin/event-posters" className="dashboard-card">
+                    <div className="card-icon">🖼️</div>
+                    <h2>Event Posters</h2>
+                    <p>Upload promotional images for events.</p>
+                </Link>
             </div>
 
             <div className="dashboard-alert">

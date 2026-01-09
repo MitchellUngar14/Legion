@@ -9,19 +9,21 @@ import './Events.css';
 
 const Events = () => {
     const [events, setEvents] = useState([]);
+    const [posters, setPosters] = useState([]);
     const [loading, setLoading] = useState(true);
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [showModal, setShowModal] = useState(false);
+    const [selectedPoster, setSelectedPoster] = useState(null);
 
     useEffect(() => {
-        const fetchEvents = async () => {
+        const fetchData = async () => {
             try {
+                // Fetch events
                 const eventsRef = collection(db, 'events');
-                const q = query(eventsRef, orderBy('date', 'asc'));
-                const querySnapshot = await getDocs(q);
-                const eventsList = querySnapshot.docs.map(doc => {
+                const eventsQuery = query(eventsRef, orderBy('date', 'asc'));
+                const eventsSnapshot = await getDocs(eventsQuery);
+                const eventsList = eventsSnapshot.docs.map(doc => {
                     const data = doc.data();
-                    // Convert Firestore Timestamp to JS Date
                     const date = data.date ? new Date(data.date.seconds * 1000) : new Date();
                     return {
                         id: doc.id,
@@ -30,14 +32,20 @@ const Events = () => {
                     };
                 });
                 setEvents(eventsList);
+
+                // Fetch event posters
+                const postersRef = collection(db, 'event_posters');
+                const postersQuery = query(postersRef, orderBy('order', 'asc'));
+                const postersSnapshot = await getDocs(postersQuery);
+                setPosters(postersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
             } catch (error) {
-                console.error("Error fetching events:", error);
+                console.error("Error fetching data:", error);
             } finally {
                 setLoading(false);
             }
         };
 
-        fetchEvents();
+        fetchData();
     }, []);
 
     const onDateChange = (date) => {
@@ -150,6 +158,46 @@ const Events = () => {
                     />
                 </div>
             </div>
+
+            {/* Event Posters Section */}
+            {posters.length > 0 && (
+                <section className="event-posters-section">
+                    <h2>Upcoming Events</h2>
+                    <div className="posters-grid">
+                        {posters.map(poster => (
+                            <div
+                                key={poster.id}
+                                className="poster-card"
+                                onClick={() => setSelectedPoster(poster)}
+                                style={{ cursor: 'pointer' }}
+                            >
+                                <img
+                                    src={poster.imageUrl}
+                                    alt={poster.title || 'Event poster'}
+                                />
+                            </div>
+                        ))}
+                    </div>
+                </section>
+            )}
+
+            {/* Poster Lightbox */}
+            {selectedPoster && (
+                <div className="poster-lightbox" onClick={() => setSelectedPoster(null)}>
+                    <button
+                        className="lightbox-close"
+                        onClick={() => setSelectedPoster(null)}
+                        aria-label="Close"
+                    >
+                        <X size={32} />
+                    </button>
+                    <img
+                        src={selectedPoster.imageUrl}
+                        alt={selectedPoster.title || 'Event poster'}
+                        onClick={(e) => e.stopPropagation()}
+                    />
+                </div>
+            )}
 
             {/* Modal for event details */}
             {showModal && (

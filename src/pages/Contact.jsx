@@ -2,6 +2,8 @@ import React from 'react';
 import './Contact.css';
 
 const Contact = () => {
+    const contactEmail = 'rcl560@kingston.net';
+
     return (
         <div className="container contact-page">
             <h1>Contact Us</h1>
@@ -16,22 +18,23 @@ const Contact = () => {
                     </p>
                     <p style={{ marginTop: '1.5rem' }}>
                         <strong>Phone:</strong><br />
-                        (613) 548-4570
+                        <a href="tel:6135484570">(613) 548-4570</a>
                     </p>
                     <p style={{ marginTop: '1.5rem' }}>
                         <strong>Email:</strong><br />
-                        rcl560@kingston.net
+                        <a href={`mailto:${contactEmail}`}>{contactEmail}</a>
                     </p>
                 </div>
 
                 <div className="contact-form">
                     <h2>Send us a Message</h2>
-                    <form>
-                        <input type="text" placeholder="Your Name" required />
-                        <input type="email" placeholder="Your Email" required />
-                        <textarea rows="5" placeholder="Message" required></textarea>
-                        <button type="submit" className="btn btn-primary">Send Message</button>
-                    </form>
+                    <p>Have questions or want to get in touch? Click below to send us an email.</p>
+                    <a
+                        href={`mailto:${contactEmail}?subject=${encodeURIComponent('Contact from Legion 560 Website')}`}
+                        className="btn btn-primary"
+                    >
+                        Send Email
+                    </a>
                 </div>
             </div>
         </div>

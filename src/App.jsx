@@ -23,6 +23,8 @@ import ManageEvents from './pages/ManageEvents';
 import ManageFood from './pages/ManageFood';
 import ManageExecutive from './pages/ManageExecutive';
 import ManageAnnouncements from './pages/ManageAnnouncements';
+import ManageRooms from './pages/ManageRooms';
+import ManageEventPosters from './pages/ManageEventPosters';
 import RequireAuth from './components/RequireAuth';
 
 function App() {
@@ -69,6 +71,16 @@ function App() {
             <Route path="/admin/announcements" element={
               <RequireAuth>
                 <ManageAnnouncements />
+              </RequireAuth>
+            } />
+            <Route path="/admin/rooms" element={
+              <RequireAuth>
+                <ManageRooms />
+              </RequireAuth>
+            } />
+            <Route path="/admin/event-posters" element={
+              <RequireAuth>
+                <ManageEventPosters />
               </RequireAuth>
             } />
           </Routes>
