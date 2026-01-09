@@ -42,6 +42,12 @@ const Dashboard = () => {
                     <h2>Executives</h2>
                     <p>Update leadership team.</p>
                 </Link>
+
+                <Link to="/admin/announcements" className="dashboard-card">
+                    <div className="card-icon">📢</div>
+                    <h2>Announcements</h2>
+                    <p>Create and manage homepage announcements.</p>
+                </Link>
             </div>
 
             <div className="dashboard-alert">

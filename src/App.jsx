@@ -22,6 +22,7 @@ import Contact from './pages/Contact';
 import ManageEvents from './pages/ManageEvents';
 import ManageFood from './pages/ManageFood';
 import ManageExecutive from './pages/ManageExecutive';
+import ManageAnnouncements from './pages/ManageAnnouncements';
 import RequireAuth from './components/RequireAuth';
 
 function App() {
@@ -63,6 +64,11 @@ function App() {
             <Route path="/admin/executive" element={
               <RequireAuth>
                 <ManageExecutive />
+              </RequireAuth>
+            } />
+            <Route path="/admin/announcements" element={
+              <RequireAuth>
+                <ManageAnnouncements />
               </RequireAuth>
             } />
           </Routes>

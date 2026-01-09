@@ -1,8 +1,37 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { collection, getDocs, query, orderBy } from 'firebase/firestore';
+import { db } from '../services/firebase';
 import './Home.css';
 
 const Home = () => {
+    const [announcements, setAnnouncements] = useState([]);
+
+    useEffect(() => {
+        const fetchAnnouncements = async () => {
+            try {
+                const q = query(collection(db, 'announcements'), orderBy('createdAt', 'desc'));
+                const snapshot = await getDocs(q);
+                const now = new Date();
+
+                // Filter to only show non-expired announcements
+                const activeAnnouncements = snapshot.docs
+                    .map(doc => ({ id: doc.id, ...doc.data() }))
+                    .filter(announcement => {
+                        if (!announcement.endDate) return false;
+                        const endDateTime = announcement.endDate.toDate();
+                        return endDateTime > now;
+                    });
+
+                setAnnouncements(activeAnnouncements);
+            } catch (error) {
+                console.error("Error fetching announcements:", error);
+            }
+        };
+
+        fetchAnnouncements();
+    }, []);
+
     return (
         <div className="home-container">
             <section className="hero-section">
@@ -16,6 +45,32 @@ const Home = () => {
                     </div>
                 </div>
             </section>
+
+            {announcements.length > 0 && (
+                <section className="announcements-section">
+                    <div className="container">
+                        <h2>Announcements</h2>
+                        <div className="announcements-grid">
+                            {announcements.map(announcement => (
+                                <div key={announcement.id} className="announcement-card">
+                                    <h3>{announcement.title}</h3>
+                                    <p>{announcement.message}</p>
+                                    {announcement.link && (
+                                        <a
+                                            href={announcement.link}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="announcement-link"
+                                        >
+                                            Learn More
+                                        </a>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </section>
+            )}
 
             <section className="info-section">
                 <div className="container">

@@ -33,3 +33,7 @@ dist-ssr
 
 # Coverage
 coverage/
+
+# Claude Code
+CLAUDE.md
+.claude/
