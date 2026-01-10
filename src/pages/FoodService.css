@@ -25,6 +25,54 @@
     color: #666;
 }
 
+/* Catering Info Section */
+.catering-info {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 12px;
+    padding: 2rem;
+    margin-top: 3rem;
+    text-align: center;
+}
+
+.catering-info h3 {
+    font-family: var(--font-family-serif);
+    font-size: 1.3rem;
+    color: var(--color-poppy-red);
+    margin-bottom: 0.75rem;
+}
+
+.catering-info p {
+    margin: 0.4rem 0;
+    color: #333;
+}
+
+.catering-info a {
+    color: var(--color-poppy-red);
+    font-weight: 500;
+    text-decoration: none;
+}
+
+.catering-info a:hover {
+    text-decoration: underline;
+}
+
+.catering-contact p:last-child {
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+@media (max-width: 768px) {
+    .catering-info {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+        padding: 1.5rem;
+    }
+}
+
 @media screen and (max-width: 768px) {
     .food-page {
         padding: 2rem 1rem;
@@ -81,6 +129,93 @@
     max-width: 100px;
 }
 
+.category-note {
+    text-align: center;
+    font-style: italic;
+    color: #555;
+    margin-top: -1rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.95rem;
+}
+
+/* Weekly Specials */
+.weekly-specials-section {
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    border: 2px solid #f59e0b;
+    border-radius: 12px;
+    padding: 2rem;
+    margin-bottom: 3rem;
+    text-align: center;
+}
+
+.weekly-specials-section h2 {
+    font-family: var(--font-family-serif);
+    font-size: 2rem;
+    color: var(--color-poppy-red);
+    margin-bottom: 1.5rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.specials-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.special-item {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.special-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.special-item h3 {
+    font-family: var(--font-family-serif);
+    font-size: 1.2rem;
+    color: var(--color-black);
+    margin: 0;
+}
+
+.special-price {
+    font-family: var(--font-family-serif);
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: var(--color-poppy-red);
+}
+
+.special-description {
+    font-size: 0.9rem;
+    color: #666;
+    margin-top: 0.5rem;
+    font-style: italic;
+}
+
+@media (max-width: 768px) {
+    .weekly-specials-section {
+        padding: 1.5rem 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .weekly-specials-section h2 {
+        font-size: 1.5rem;
+    }
+
+    .special-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+}
+
 .menu-items-grid {
     display: grid;
     grid-template-columns: 1fr;
@@ -128,6 +263,21 @@
     background-color: var(--color-white);
     padding-right: 0.5rem;
     z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.gf-badge {
+    font-family: var(--font-family-sans);
+    font-size: 0.65rem;
+    font-weight: bold;
+    background-color: #22c55e;
+    color: white;
+    padding: 2px 6px;
+    border-radius: 4px;
+    letter-spacing: 0;
+    text-transform: none;
 }
 
 .menu-dots {
