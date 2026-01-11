@@ -41,7 +41,7 @@ const Home = () => {
                     <p>Serving Veterans and the Community in Kingston, Ontario</p>
                     <div className="hero-buttons">
                         <Link to="/events" className="btn btn-primary">Upcoming Events</Link>
-                        <Link to="/membership" className="btn btn-outline">Join Us</Link>
+                        <Link to="/branch-info/membership" className="btn btn-outline">Join Us</Link>
                     </div>
                 </div>
             </section>
